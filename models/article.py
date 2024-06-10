@@ -1,38 +1,33 @@
-from connection import CURSOR
+from database.connection import get_db_connection
+from models.author import Author
+from models.magazine import Magazine
 
 class Article:
-
-    # Class variable to store all instances of Article
-    all = []
-
-    def __init__(self, id, title, content, author_id, magazine_id):
-        self.id = id
+    def __init__(self, id, title, author, magazine):
+        self._id = id
         self.title = title
-        self.content = content
-        self.author_id = author_id
-        self.magazine_id = magazine_id
-        # Append the new article to the class variable 'all'
-        Article.all.append(self)
+        self.author = author
+        self.magazine = magazine
 
-    def __repr__(self):
-        return f'<Article {self.id}: {self.title}, {self.content}, {self.author_id}, {self.magazine_id}>'
+    @property
+    def id(self):
+        return self._id
+    
+    id.setter
+    def id(self, value):
+        if not isinstance(value, int):
+            raise ValueError("Id must be an integer.")
+        self._id = value
 
     @property
     def title(self):
         return self._title
-    
+
     @title.setter
     def title(self, value):
-        if not hasattr(self, '_title'):  # Check if _title has not been set before
-            if isinstance(value, str):
-                self._title = value
-            else:
-                raise ValueError("Title must be a string.")
-        else:
-            raise AttributeError("Title can only be set once.")
-        
-    def get_author(self):
-        pass   
+        if not isinstance(value, str) or not (1 <= len(value) <= 50):
+            raise ValueError("Title must be a string between 1 and 50 characters.")
+        self._title = value
 
-    def get_magazine(self):
-        pass 
+    def __repr__(self):
+        return f"Article(title='{self.title}', author={self.author}, magazine={self.magazine})"
