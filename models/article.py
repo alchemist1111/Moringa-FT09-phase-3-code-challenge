@@ -13,7 +13,7 @@ class Article:
     def id(self):
         return self._id
     
-    id.setter
+    @id.setter
     def id(self, value):
         if not isinstance(value, int):
             raise ValueError("Id must be an integer.")
