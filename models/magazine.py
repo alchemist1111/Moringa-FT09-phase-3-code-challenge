@@ -40,7 +40,7 @@ class Magazine:
         from models.article import Article  
         conn = get_db_connection()
         cursor = conn.cursor()
-        cursor.execute('SELECT * FROM articles WHERE magazine_id = ?', (self.id))
+        cursor.execute('SELECT * FROM articles WHERE magazine_id = ?', (self.id,))
         rows = cursor.fetchall()
         conn.close()
         return [Article(row['id'], row['title']) for row in rows]
