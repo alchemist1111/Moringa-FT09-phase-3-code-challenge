@@ -1,23 +1,14 @@
-from database.connection import get_db_connection
-from models.author import Author
-from models.magazine import Magazine
-
 class Article:
-    def __init__(self, id, title, author, magazine):
+    def __init__(self, id, title, content, author_id, magazine_id):
         self._id = id
         self.title = title
-        self.author = author
-        self.magazine = magazine
+        self.content = content
+        self._author_id = author_id
+        self._magazine_id = magazine_id
 
     @property
     def id(self):
         return self._id
-    
-    @id.setter
-    def id(self, value):
-        if not isinstance(value, int):
-            raise ValueError("Id must be an integer.")
-        self._id = value
 
     @property
     def title(self):
@@ -25,9 +16,35 @@ class Article:
 
     @title.setter
     def title(self, value):
-        if not isinstance(value, str) or not (1 <= len(value) <= 50):
-            raise ValueError("Title must be a string between 1 and 50 characters.")
-        self._title = value
+        if isinstance(value, str) and 5 <= len(value) <= 50:
+            self._title = value
+        else:
+            raise ValueError("Title must be a string between 5 and 50 characters")
 
-    def __repr__(self):
-        return f"Article(title='{self.title}', author={self.author}, magazine={self.magazine})"
+    @classmethod   
+    def create_article(cls, cursor, title, content, author_id, magazine_id):
+        cursor.execute("INSERT INTO articles (title, content, author_id, magazine_id) VALUES (?, ?, ?, ?)", (title, content, author_id, magazine_id))
+        article_id = cursor.lastrowid
+        return cls(article_id, title, content, author_id, magazine_id)
+
+    @classmethod   
+    def get_title(cls, cursor):
+        cursor.execute("SELECT title FROM articles")
+        titles = cursor.fetchall()
+        return [title[0] for title in titles] if titles else None
+
+
+    def get_author(self, cursor):
+        cursor.execute("SELECT name FROM authors WHERE id = ?", (self._author_id,))
+        author_name = cursor.fetchone()
+        return author_name[0] if author_name else None
+
+
+    def get_magazine(self, cursor):
+        cursor.execute("SELECT name FROM magazines WHERE id = ?", (self._magazine_id,))
+        magazine_name = cursor.fetchone()
+        return magazine_name[0] if magazine_name else None
+
+
+
+
